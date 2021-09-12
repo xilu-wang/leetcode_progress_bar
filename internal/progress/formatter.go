@@ -2,6 +2,7 @@ package progress
 
 import (
 	"fmt"
+	"sort"
 	"time"
 )
 
@@ -20,60 +21,33 @@ func ShowProgressBar(interval TimeInterval) {
 
 	switch interval {
 	case Day:
-		fmt.Println(buildDailySummary(dataMap))
+		fmt.Println(buildSummary(dataMap, 10))
 	case Month:
-		fmt.Println(buildMonthlySummary(dataMap))
+		fmt.Println(buildSummary(dataMap, 7))
 	case Year:
-		fmt.Println(buildYearlySummary(dataMap))
+		fmt.Println(buildSummary(dataMap, 4))
 	}
 }
 
-func buildDailySummary(dataMap map[string]int64) string {
+func buildSummary(dataMap map[string]int64, end int) string {
 	dailyMap := make(map[string]int)
+	var keys []string
 
 	for _, v := range dataMap {
 		timeStrFull := time.Unix(v, 0).Format("2006-01-02 15:04:05")
-		timeStr := timeStrFull[:10]
+		timeStr := timeStrFull[:end]
 		dailyMap[timeStr] = dailyMap[timeStr] + 1
 	}
 
-	var output string
-	for k, v := range dailyMap {
-		output += fmt.Sprintf("%v: %v questions \n", k, v)
+	for k, _ := range dailyMap {
+		keys = append(keys, k)
 	}
 
-	return output
-}
-
-func buildMonthlySummary(dataMap map[string]int64) string {
-	monthlyMap := make(map[string]int)
-
-	for _, v := range dataMap {
-		timeStrFull := time.Unix(v, 0).Format("2006-01-02 15:04:05")
-		timeStr := timeStrFull[:7]
-		monthlyMap[timeStr] = monthlyMap[timeStr] + 1
-	}
+	sort.Strings(keys)
 
 	var output string
-	for k, v := range monthlyMap {
-		output += fmt.Sprintf("%v: %v questions \n", k, v)
-	}
-
-	return output
-}
-
-func buildYearlySummary(dataMap map[string]int64) string {
-	yearlyMap := make(map[string]int)
-
-	for _, v := range dataMap {
-		timeStrFull := time.Unix(v, 0).Format("2006-01-02 15:04:051")
-		timeStr := timeStrFull[:4]
-		yearlyMap[timeStr] = yearlyMap[timeStr] + 1
-	}
-
-	var output string
-	for k, v := range yearlyMap {
-		output += fmt.Sprintf("%v: %v questions \n", k, v)
+	for _, key := range keys {
+		output += fmt.Sprintf("%v: %v questions \n", key, dailyMap[key])
 	}
 
 	return output
