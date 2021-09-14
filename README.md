@@ -23,8 +23,7 @@ chmod +x ./lcp
 If you run `lcp progress` but the total number is not accurate, try these command to cleanup:
 ```bash
 # remove the log files
-rm /tmp/leetcode_progress/log
-rm /tmp/leetcode_progress/data
+./lcp reset -f data
 
 # re-run
 ./lcp progress -t day
