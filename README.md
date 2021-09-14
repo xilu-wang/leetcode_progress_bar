@@ -36,4 +36,4 @@ cd leetcode_progress_bar
 
 9. Scroll down to the end and copy the last Cookie
 
-![postman_03](screenshots/postman03.jpg)
+![postman_03](screenshots/postman03.png)

@@ -96,7 +96,7 @@ func CrawlSubmission() (map[string]int64, error) {
 				dataMap[s.TitleSlug] = s.Timestamp
 				newData[s.TitleSlug] = s.Timestamp
 				bar.Add(1)
-				time.Sleep(125*time.Millisecond)
+				time.Sleep(175*time.Millisecond)
 			}
 
 			if s.Timestamp < curTime {
