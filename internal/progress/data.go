@@ -7,26 +7,25 @@ import (
 	"path"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type TimeInterval int
 
 const (
-	log = "/tmp/leetcode_progress/log"
-	data = "/tmp/leetcode_progress/data"
+	BaseDir = "/tmp/leetcode_progress"
+	LogPath = "/tmp/leetcode_progress/log"
+	DataPath = "/tmp/leetcode_progress/data"
 	CookiePath = "/tmp/leetcode_progress/cookie"
 )
 
 var (
 	dataMap map[string]int64
 	cookie string
-	lastCrawlTimestamp int64
 )
 
 func InitData() {
 	// create leetcode_progress dir under /tmp if not exist
-	validateBaseDir(data)
+	validateBaseDir(DataPath)
 
 	// check cookie
 	if fileExist(cookie) {
@@ -42,12 +41,9 @@ func InitData() {
 
 	// init dataMap, key is the title-slug, value is the first accepted timestamp
 	dataMap = make(map[string]int64)
-	if fileExist(data) {
+	if fileExist(DataPath) {
 		buildDataMap()
 	}
-
-	// refresh log
-	lastCrawlTimestamp = ReadAndUpdateLog()
 }
 
 func OverwriteFile(path string, content string) {
@@ -131,15 +127,11 @@ func ReadFile(path string) []string {
 	return lines
 }
 
-func ReadAndUpdateLog() int64 {
+func GetLog() int64 {
 	var lastLogTimestamp int64 = 0
 
-	defer func() {
-		OverwriteFile(log, fmt.Sprintf("%v", time.Now().Unix()))
-	}()
-
-	if fileExist(log) {
-		lines := ReadFile(log)
+	if fileExist(LogPath) {
+		lines := ReadFile(LogPath)
 		if len(lines) == 0 {
 			return lastLogTimestamp
 		}
@@ -150,10 +142,33 @@ func ReadAndUpdateLog() int64 {
 	return lastLogTimestamp
 }
 
+func UpdateLog(time int64) {
+	if fileExist(LogPath) {
+		OverwriteFile(LogPath, fmt.Sprintf("%v", time))
+	}
+}
+
+func RemoveFile(path string) {
+	if fileExist(path) {
+		if e := os.Remove(path); e != nil {
+			panic(e)
+		}
+	}
+}
+
+func RemoveDir() {
+	info, err := os.Stat(BaseDir)
+	if err == nil && info.IsDir() {
+		if e := os.RemoveAll(BaseDir); e != nil {
+			panic(e)
+		}
+	}
+}
+
 func buildDataMap() {
 	var f *os.File
 	var err error
-	if f, err = os.Open(data); err != nil {
+	if f, err = os.Open(DataPath); err != nil {
 		panic(err)
 	}
 

@@ -49,6 +49,10 @@ func CrawlSubmission() (map[string]int64, error) {
 		}
 	}
 
+	// refresh log
+	lastCrawlTimestamp := GetLog()
+	updatedTimestamp := lastCrawlTimestamp
+
 	hasNext := true
 	offset := 0
 	curTime := time.Now().Unix()
@@ -102,6 +106,10 @@ func CrawlSubmission() (map[string]int64, error) {
 			if s.Timestamp < curTime {
 				curTime = s.Timestamp
 			}
+
+			if s.Timestamp > updatedTimestamp {
+				updatedTimestamp = s.Timestamp
+			}
 		}
 
 		hasNext, err = jsonparser.GetBoolean([]byte(respStr), "has_next")
@@ -116,7 +124,8 @@ func CrawlSubmission() (map[string]int64, error) {
 	for k, v := range newData {
 		newDataStr += fmt.Sprintf("%v:%v\n", k, v)
 	}
-	AppendFile(data, newDataStr)
+	AppendFile(DataPath, newDataStr)
+	UpdateLog(updatedTimestamp)
 
 	return dataMap, nil
 }

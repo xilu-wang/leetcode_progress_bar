@@ -2,6 +2,7 @@ package progress
 
 import (
 	"fmt"
+	"leetcode_progress_bar/internal/util"
 	"sort"
 	"time"
 )
@@ -16,7 +17,7 @@ func ShowProgressBar(interval TimeInterval) {
 
 	dataMap, err := CrawlSubmission()
 	if err != nil {
-		fmt.Printf("ERROR: %v\n", err)
+		util.PrintError(err.Error())
 		return
 	}
 

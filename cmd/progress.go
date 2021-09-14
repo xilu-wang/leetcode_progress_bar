@@ -3,15 +3,15 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"leetcode_progress_bar/internal/progress"
-	"log"
+	"leetcode_progress_bar/internal/util"
 )
 
 var time string
 
 var progressCmd = &cobra.Command{
 	Use:   "progress",
-	Short: "leetcode progress bar",
-	Long:  "leetcode progress bar to show your submission record daily, monthly and yearly.",
+	Short: "Show your leetcode progress",
+	Long:  "A leetcode progress report to show your submissions daily, monthly or yearly.",
 	Run: func(cmd *cobra.Command, args []string) {
 		switch time {
 		case "day":
@@ -21,11 +21,11 @@ var progressCmd = &cobra.Command{
 		case "year":
 			progress.ShowProgressBar(progress.Year)
 		default:
-			log.Fatalf("invalid time interval")
+			util.PrintError("Invalid time interval. Please input 'day', 'month', or 'year'.")
 		}
 	},
 }
 
 func init() {
-	progressCmd.Flags().StringVarP(&time, "time", "t", "", "please input time interval")
+	progressCmd.Flags().StringVarP(&time, "time", "t", "", "Please input time interval: 'day', 'month', or 'year'.")
 }
