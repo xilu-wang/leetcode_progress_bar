@@ -2,8 +2,10 @@ package progress
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/buger/jsonparser"
+	"github.com/schollz/progressbar/v3"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -32,14 +34,18 @@ func InitCrawler() {
 func CrawlSubmission() (map[string]int64, error) {
 	// validate cookie
 	if len(cookie) == 0 {
+		if !fileExist(CookiePath) {
+			return nil, errors.New("cookie file not found, please set cookie")
+		}
+
 		cookieLines := ReadFile(CookiePath)
 		if len(cookieLines) == 0 {
-			panic("ERROR: cookie not found, please set cookie")
+			return nil, errors.New("cookie invalid, please reset cookie")
 		}
 
 		cookie = cookieLines[0]
 		if len(cookie) == 0 {
-			panic("ERROR: invalid cookie, please reset cookie")
+			return nil, errors.New("invalid cookie, please reset cookie")
 		}
 	}
 
@@ -55,17 +61,28 @@ func CrawlSubmission() (map[string]int64, error) {
 		dataMap = make(map[string]int64)
 	}
 
+	var errCount int
 	newData := make(map[string]int64)
 
-	for hasNext && curTime > lastCrawlTimestamp {
+	bar := progressbar.NewOptions(-1,
+		progressbar.OptionSetWidth(10),
+		progressbar.OptionSetDescription("crawling your leetcode submissions..."),
+		progressbar.OptionShowCount(),
+		progressbar.OptionSpinnerType(33),
+		progressbar.OptionClearOnFinish(),
+	)
+
+	for hasNext && curTime > lastCrawlTimestamp && errCount< 5 {
 		url := fmt.Sprintf("%v?offset=%d&limit=%d", baseURL, offset, batchSize)
 		respStr, err := get(url, header)
 		if err != nil {
-			panic(err)
+			errCount++
+			continue
 		}
 		var submissions []Submission
 		data, _, _, _ := jsonparser.Get([]byte(respStr), "submissions_dump")
 		if err := json.Unmarshal(data, &submissions); err != nil {
+			errCount++
 			continue
 		}
 
@@ -78,6 +95,8 @@ func CrawlSubmission() (map[string]int64, error) {
 			if timestamp == 0 || timestamp > s.Timestamp {
 				dataMap[s.TitleSlug] = s.Timestamp
 				newData[s.TitleSlug] = s.Timestamp
+				bar.Add(1)
+				time.Sleep(125*time.Millisecond)
 			}
 
 			if s.Timestamp < curTime {
@@ -85,7 +104,10 @@ func CrawlSubmission() (map[string]int64, error) {
 			}
 		}
 
-		hasNext, _ = jsonparser.GetBoolean([]byte(respStr), "has_next")
+		hasNext, err = jsonparser.GetBoolean([]byte(respStr), "has_next")
+		if err != nil {
+			errCount++
+		}
 		offset += batchSize
 	}
 

@@ -16,7 +16,8 @@ func ShowProgressBar(interval TimeInterval) {
 
 	dataMap, err := CrawlSubmission()
 	if err != nil {
-		fmt.Printf("ERROR: %v", err)
+		fmt.Printf("ERROR: %v\n", err)
+		return
 	}
 
 	switch interval {
@@ -45,7 +46,7 @@ func buildSummary(dataMap map[string]int64, end int) string {
 
 	sort.Strings(keys)
 
-	var output string
+	output := "\n"
 	for _, key := range keys {
 		output += fmt.Sprintf("%v: %v questions \n", key, dailyMap[key])
 	}
