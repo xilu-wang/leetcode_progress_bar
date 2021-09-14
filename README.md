@@ -18,6 +18,17 @@ chmod +x ./lcp
 ./lcp progress -t month
 ./lcp progress -t year
 ```
+## Troubleshooting
+
+If you run `lcp progress` but the total number is not accurate, try these command to cleanup:
+```bash
+# remove the log files
+rm /tmp/leetcode_progress/log
+rm /tmp/leetcode_progress/data
+
+# re-run
+./lcp progress -t day
+```
 
 ## How to get your leetcode cookie?
 
@@ -25,10 +36,12 @@ chmod +x ./lcp
 2. Inspect --> Network
 3. Go to https://leetcode.com/submissions/
 4. Filter the requests by "api/sub"
-5. Copy as cURL
+5. Copy as cURL and find the cookie
 
 ![screenshot demo](screenshots/screenshot.png)
 
+#### Below is the instruction if you are using Firefox
+#### I got issues when copy cookie directly from firefox
 
 6. Open postman
 7. Import -> Paste Raw text and import
