@@ -10,7 +10,7 @@ var cookie string
 
 var cookieCmd = &cobra.Command{
 	Use:   "cookie",
-	Short: "init leetcode progress bar",
+	Short: "set cookie for leetcode",
 	Long:  "set cookie from your leetcode website.",
 	Run: func(cmd *cobra.Command, args []string) {
 		progress.OverwriteFile(progress.CookiePath, cookie)

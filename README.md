@@ -1,17 +1,22 @@
 # leetcode_progress_bar
 
-## Basic use
+## Basic use (Mac Only)
+
+1. Download binary file from here: [lcp](lcp)
+   
+2. `chmod +x ./lcp`
+2. Try run `./lcp progress -t day`
+3. Open Preference --> Security & Privacy --> General
+4. Allow lcp
 
 ```bash
-git clone git@github.com:xilu-wang/leetcode_progress_bar.git
+chmod +x ./lcp
 
-cd leetcode_progress_bar
+./lcp cookie -s '{PASTE YOUR COOKIE HERE}'
 
-./leetcode_progress_bar cookie -s '{PASTE YOUR COOKIE HERE}'
-
-./leetcode_progress_bar progress -t day
-./leetcode_progress_bar progress -t month
-./leetcode_progress_bar progress -t year
+./lcp progress -t day
+./lcp progress -t month
+./lcp progress -t year
 ```
 
 ## How to get your leetcode cookie?

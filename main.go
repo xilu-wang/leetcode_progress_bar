@@ -9,6 +9,7 @@ import (
 func main() {
 
 	progress.InitData()
+
 	progress.InitCrawler()
 
 	err := cmd.Execute()
