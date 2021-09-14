@@ -15,4 +15,5 @@ func Execute() error {
 func init() {
 	rootCmd.AddCommand(progressCmd)
 	rootCmd.AddCommand(cookieCmd)
+	rootCmd.AddCommand(resetCmd)
 }
